@@ -1,7 +1,7 @@
-#include <stdio.h>
+void mlx();
 
 int main()
 {
-	printf("hello\n");
+	mlx();
 	return (0);
 }
