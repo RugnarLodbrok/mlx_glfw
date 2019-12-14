@@ -1,0 +1,4 @@
+includes
+*.lib
+src/glad.c
+src/main_glut.c
