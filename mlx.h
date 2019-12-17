@@ -28,8 +28,21 @@ typedef struct
 {
 	int w;
 	int h;
+	uint *data;
+	uint texo;
+	uint vbo;
+	uint vao;
+	uint ebo;
+	uint shader_program;
+} t_mlx_win_framebuffer;
+
+typedef struct
+{
+	int w;
+	int h;
 	GLFWwindow *window;
-	unsigned int *framebuffer;
+//	unsigned int *framebuffer;
+	t_mlx_win_framebuffer fb;
 //	t_mlx_hook *hooks;
 	GLuint read_fbo;
 	GLuint texo;
@@ -56,5 +69,11 @@ void mlx_string_put(t_mlx *mlx, t_mlx_win *win, int x, int y, unsigned int color
 t_mlx_image *mlx_new_image(t_mlx *mlx, int w, int h);
 unsigned int *mlx_get_data_addr(t_mlx_image *image, int *bpp, int *row_len, int *en);
 void mlx_put_image_to_window(t_mlx *mlx, t_mlx_win *win, t_mlx_image *im, int x, int y);
+
+void t_mlx_win_framebuffer_init(t_mlx_win_framebuffer* fb, int w, int h);
+void t_mlx_win_framebuffer_draw(t_mlx_win_framebuffer* fb);
+
+uint make_shader(uint type, char* f_name);
+uint link_shaders(int n, ...);
 
 #endif

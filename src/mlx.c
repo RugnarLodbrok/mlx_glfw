@@ -6,7 +6,15 @@
 
 void fps_meter_frame();
 
-int t_mlx_win_create_window(t_mlx_win* win)
+static void processInput(GLFWwindow* window)
+{
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, 1);
+
+	//todo: check if glfw gas normal key callbacks
+}
+
+static int t_mlx_win_create_window(t_mlx_win* win)
 {
 	win->window = glfwCreateWindow(win->w, win->h, "title", 0, 0);
 	if (win->window == NULL)
@@ -31,18 +39,14 @@ void t_mlx_win_init(t_mlx_win* win, int w, int h)
 
 	win->w = w;
 	win->h = h;
-	win->framebuffer = calloc(w * h, sizeof(uint));
 	if (t_mlx_win_create_window(win) < 0)
 		ft_error_exit("failed to create window");
-	glGenTextures(1, &win->texo);
-	glBindTexture(GL_TEXTURE_2D, win->texo);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, w, h, 0, GL_RGBA8, GL_UNSIGNED_BYTE, win->framebuffer);
+	t_mlx_win_framebuffer_init(&win->fb, w, h);
+}
 
-	glGenFramebuffers(1, &win->read_fbo);
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, win->read_fbo);
-	glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-						   GL_TEXTURE_2D, win->texo, 0);
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+void mlx_pixel_put(t_mlx *mlx, t_mlx_win *win, int x, int y, unsigned int color)
+{
+	win->fb.data[win->w * y + x] = color;
 }
 
 void mlx()
@@ -54,12 +58,18 @@ void mlx()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	t_mlx_win_init(&win, 800, 600);
+	mlx_pixel_put(0, &win, 100, 100, 0xFFFFFF);
+	mlx_pixel_put(0, &win, 101, 101, 0xFF0000);
+	mlx_pixel_put(0, &win, 102, 102, 0x00FF00);
+	mlx_pixel_put(0, &win, 103, 103, 0x0000FF);
+
 	while (!glfwWindowShouldClose(win.window))
 	{
-//		processInput(window);
+		processInput(win.window);
 		glfwSwapBuffers(win.window); //??
-//		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-//		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+		t_mlx_win_framebuffer_draw(&win.fb);
 		glfwPollEvents();
 		fps_meter_frame();
 	}

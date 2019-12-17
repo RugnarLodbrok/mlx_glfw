@@ -7,6 +7,8 @@ add_library(mlx_glfw
 		src/stb_libs.c
 		src/glad.c
 		src/mlx.c
+		src/framebuffer.c
+		src/shader.c
 		src/fps_meter.c
 		)
 target_link_libraries(mlx_glfw
