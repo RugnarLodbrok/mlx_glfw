@@ -1,13 +1,14 @@
 #include "mlx.h"
 #include "mlx_consts.h"
 #include <stdio.h>
+
 static int loop_hook(void *p)
 {
 	static int i = 1;
 
 	if (i)
 	{
-		ft_printf("loop hook works!\n");
+		printf("loop hook works!\n");
 		i = 0;
 	}
 	return (0);

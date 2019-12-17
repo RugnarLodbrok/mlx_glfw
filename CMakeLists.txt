@@ -15,7 +15,6 @@ add_library(mlx_glfw
 		src/fps_meter.c
 		)
 target_link_libraries(mlx_glfw
-		LINK_PUBLIC ${CMAKE_SOURCE_DIR}/libft.lib
 		LINK_PUBLIC ${CMAKE_SOURCE_DIR}/glfw3.lib
 		)
 add_executable(mlx_test

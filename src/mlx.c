@@ -2,7 +2,6 @@
 #include "opengl.h"
 #include "mlx.h"
 #include "mlx_consts.h"
-#include "libft.h"
 
 void fps_meter_frame();
 
@@ -36,13 +35,14 @@ static int t_mlx_win_create_window(t_mlx_win* win)
 
 void t_mlx_win_init(t_mlx_win* win, int w, int h)
 {
-	ft_bzero(win, sizeof(t_mlx_win));
-
 	win->w = w;
 	win->h = h;
 	win->hooks = calloc(MLX_EVENTS_NUMBER, sizeof(t_mlx_hook));
 	if (t_mlx_win_create_window(win) < 0)
-		ft_error_exit("failed to create window");
+	{
+		printf("failed to create window\n");
+		exit(1);
+	}
 	t_mlx_win_framebuffer_init(&win->fb, w, h);
 }
 
