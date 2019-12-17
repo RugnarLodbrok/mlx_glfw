@@ -44,7 +44,7 @@ void t_mlx_win_init(t_mlx_win* win, int w, int h)
 	t_mlx_win_framebuffer_init(&win->fb, w, h);
 }
 
-void mlx_pixel_put(t_mlx *mlx, t_mlx_win *win, int x, int y, unsigned int color)
+void mlx_pixel_put(t_mlx* mlx, t_mlx_win* win, int x, int y, unsigned int color)
 {
 	win->fb.data[win->w * y + x] = color;
 }
