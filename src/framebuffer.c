@@ -2,6 +2,11 @@
 #include "mlx.h"
 #include <stb_image.h>
 
+void mlx_pixel_put(t_mlx* mlx, t_mlx_win* win, int x, int y, unsigned int color)
+{
+	win->fb.data[win->w * y + x] = color;
+}
+
 void t_mlx_win_framebuffer_init(t_mlx_win_framebuffer* fb, int w, int h)
 {
 	fb->w = w;

@@ -3,10 +3,13 @@ project(mlx_glfw C)
 set(CMAKE_C_STANDARD 90)
 include_directories(.)
 include_directories(includes)
+include_directories(libft)
 add_library(mlx_glfw
 		src/glad.c
 		src/mlx.c
+		src/hook.c
 		src/framebuffer.c
+		src/mlx_keys.c
 		src/fps_meter.c
 		)
 target_link_libraries(mlx_glfw

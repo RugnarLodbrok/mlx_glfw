@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include "opengl.h"
 #include "mlx.h"
-#include "libft/mlx_consts.h"
-#include "libft/libft.h"
+#include "mlx_consts.h"
+#include "libft.h"
 
 void fps_meter_frame();
 
@@ -23,6 +23,7 @@ static int t_mlx_win_create_window(t_mlx_win* win)
 		glfwTerminate();
 		return -1;
 	}
+	glfwSetWindowUserPointer(win->window, win);
 	glfwMakeContextCurrent(win->window);
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
@@ -39,14 +40,10 @@ void t_mlx_win_init(t_mlx_win* win, int w, int h)
 
 	win->w = w;
 	win->h = h;
+	win->hooks = calloc(MLX_EVENTS_NUMBER, sizeof(t_mlx_hook));
 	if (t_mlx_win_create_window(win) < 0)
 		ft_error_exit("failed to create window");
 	t_mlx_win_framebuffer_init(&win->fb, w, h);
-}
-
-void mlx_pixel_put(t_mlx* mlx, t_mlx_win* win, int x, int y, unsigned int color)
-{
-	win->fb.data[win->w * y + x] = color;
 }
 
 void* mlx_new_window(t_mlx* mlx, int w, int h, const char* title)
@@ -68,19 +65,8 @@ void* mlx_init()
 	t_mlx* mlx;
 
 	mlx = calloc(1, sizeof(t_mlx));
+	mlx_init_glfw_key_map();
 	return mlx;
-}
-
-void mlx_loop_hook(t_mlx* mlx, int (* loop_hook)(void* p), void* p)
-{
-
-}
-
-void mlx_hook(t_mlx_win* win, int event, int event_mask,
-			  int (* hook)(),
-			  void* p)
-{
-
 }
 
 void mlx_loop(t_mlx* mlx)
@@ -90,11 +76,13 @@ void mlx_loop(t_mlx* mlx)
 	win = mlx->win;
 	while (!glfwWindowShouldClose(win->window))
 	{
-		processInput(win->window);
+//		processInput(win->window);
 		glfwSwapBuffers(win->window); //??
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		t_mlx_win_framebuffer_draw(&win->fb);
+		if (mlx->loop_hook)
+			mlx->loop_hook(mlx->loop_hook_p);
 		glfwPollEvents();
 		fps_meter_frame();
 	}

@@ -1,9 +1,15 @@
 #include "mlx.h"
-#include "libft/mlx_consts.h"
+#include "mlx_consts.h"
 #include <stdio.h>
 static int loop_hook(void *p)
 {
-//	ft_printf("loop!\n");
+	static int i = 1;
+
+	if (i)
+	{
+		ft_printf("loop hook works!\n");
+		i = 0;
+	}
 	return (0);
 }
 
@@ -12,6 +18,12 @@ static int key_down_f(int keycode, void *p)
 	if (keycode == KEY_ESC)
 		exit(0);
 	printf("key down: %d\n", keycode);
+	return (0);
+}
+
+static int mouse_press_f(int button, int x, int y, void *p)
+{
+	printf("CLICK CALLBACK\n");
 	return (0);
 }
 
@@ -28,6 +40,7 @@ int main()
 	mlx_pixel_put(mlx, win, 103, 103, 0x0000FF);
 	mlx_loop_hook(mlx, loop_hook, 0);
 	mlx_hook(win, MLX_EVENT_KEY_PRESS, 0, key_down_f, 0);
+	mlx_hook(win, MLX_EVENT_MOUSE_PRESS, 0, mouse_press_f, 0);
 	mlx_loop(mlx);
 	return 0;
 }

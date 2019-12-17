@@ -38,9 +38,8 @@ typedef struct
 	int w;
 	int h;
 	GLFWwindow *window;
-//	unsigned int *framebuffer;
 	t_mlx_win_framebuffer fb;
-//	t_mlx_hook *hooks;
+	t_mlx_hook *hooks;
 	GLuint read_fbo;
 	GLuint texo;
 } t_mlx_win;
@@ -52,7 +51,7 @@ typedef struct
 	void *loop_hook_p;
 } t_mlx;
 
-
+void mlx_init_glfw_key_map();
 void mlx_loop(t_mlx *mlx);
 void mlx_init_glut_key_map();
 void *mlx_new_window(t_mlx *mlx, int w, int h, const char *title);
