@@ -30,10 +30,7 @@ typedef struct
 	int h;
 	uint *data;
 	uint texo;
-	uint vbo;
-	uint vao;
-	uint ebo;
-	uint shader_program;
+	uint rfbo;
 } t_mlx_win_framebuffer;
 
 typedef struct
