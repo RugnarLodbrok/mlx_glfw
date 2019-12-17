@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.6.2)
 project(mlx_glfw C)
 set(CMAKE_C_STANDARD 90)
 include_directories(.)
-include_directories(includes)
 include_directories(libft)
+include_directories(includes)
 add_library(mlx_glfw
 		src/glad.c
 		src/mlx.c

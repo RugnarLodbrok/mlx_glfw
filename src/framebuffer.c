@@ -1,6 +1,5 @@
 #include "opengl.h"
 #include "mlx.h"
-#include <stb_image.h>
 
 void mlx_pixel_put(t_mlx* mlx, t_mlx_win* win, int x, int y, unsigned int color)
 {
