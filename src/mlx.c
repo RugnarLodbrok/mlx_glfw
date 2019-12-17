@@ -49,27 +49,52 @@ void mlx_pixel_put(t_mlx* mlx, t_mlx_win* win, int x, int y, unsigned int color)
 	win->fb.data[win->w * y + x] = color;
 }
 
-void mlx()
+void* mlx_new_window(t_mlx* mlx, int w, int h, const char* title)
 {
-	t_mlx_win win;
+	t_mlx_win* win;
 
+	win = calloc(1, sizeof(t_mlx_win));
+	mlx->win = win;
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	t_mlx_win_init(&win, 800, 600);
-	mlx_pixel_put(0, &win, 100, 100, 0xFFFFFF);
-	mlx_pixel_put(0, &win, 101, 101, 0xFF0000);
-	mlx_pixel_put(0, &win, 102, 102, 0x00FF00);
-	mlx_pixel_put(0, &win, 103, 103, 0x0000FF);
+	t_mlx_win_init(win, w, h);
+	return (win);
+}
 
-	while (!glfwWindowShouldClose(win.window))
+void* mlx_init()
+{
+	t_mlx* mlx;
+
+	mlx = calloc(1, sizeof(t_mlx));
+	return mlx;
+}
+
+void mlx_loop_hook(t_mlx* mlx, int (* loop_hook)(void* p), void* p)
+{
+
+}
+
+void mlx_hook(t_mlx_win* win, int event, int event_mask,
+			  int (* hook)(),
+			  void* p)
+{
+
+}
+
+void mlx_loop(t_mlx* mlx)
+{
+	t_mlx_win* win;
+
+	win = mlx->win;
+	while (!glfwWindowShouldClose(win->window))
 	{
-		processInput(win.window);
-		glfwSwapBuffers(win.window); //??
+		processInput(win->window);
+		glfwSwapBuffers(win->window); //??
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
-		t_mlx_win_framebuffer_draw(&win.fb);
+		t_mlx_win_framebuffer_draw(&win->fb);
 		glfwPollEvents();
 		fps_meter_frame();
 	}

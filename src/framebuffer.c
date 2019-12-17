@@ -1,25 +1,32 @@
 #include "opengl.h"
 #include "mlx.h"
+#include <stb_image.h>
+
+static void update_texture(t_mlx_win_framebuffer* fb, uint color)
+{
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, fb->w, fb->h,
+				 0, GL_RGBA, GL_UNSIGNED_BYTE, fb->data);
+}
 
 static void fb_prepare_texture(t_mlx_win_framebuffer* fb)
 {
 	float vertices[] = {
-			-1, -1, 0, 0, 0,
-			-1, 1, 0, 0, 1,
-			1, 1, 0, 1, 1,
-			1, -1, 0, 1, 0};
+			-1, -1, 0, 0, 1,
+			-1, 1, 0, 0, 0,
+			1, 1, 0, 1, 0,
+			1, -1, 0, 1, 1};
 	uint indices[] = {
 			0, 1, 2,
 			2, 3, 0};
 
-	for (int i = 0; i < fb->w * fb->h; ++i)
-		fb->data[i] = 0xAAAAAAAA;
-
 	glActiveTexture(GL_TEXTURE0);
 	glGenTextures(1, &fb->texo);
 	glBindTexture(GL_TEXTURE_2D, fb->texo);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, fb->w, fb->h,
-				 0, GL_RGB, GL_UNSIGNED_BYTE, fb->data);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	update_texture(fb, 0);
 
 	glGenVertexArrays(1, &fb->vao);
 	glGenBuffers(1, &fb->vbo);
@@ -54,48 +61,11 @@ void t_mlx_win_framebuffer_init(t_mlx_win_framebuffer* fb, int w, int h)
 
 void t_mlx_win_framebuffer_draw(t_mlx_win_framebuffer* fb)
 {
+	update_texture(fb, 0);
 	glUseProgram(fb->shader_program);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, fb->texo);
 	glBindVertexArray(fb->vao);
-//	glDrawArrays(GL_TRIANGLES, 0, 3);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 }
-
-/*
-void t_mlx_win_init_fb(t_mlx_win* win)
-{
-	glGenTextures(1, &win->texo);
-	glBindTexture(GL_TEXTURE_2D, win->texo);
-	glTexImage2D(
-			GL_TEXTURE_2D, 0, GL_RGBA8,
-			win->w, win->h, 0, GL_RGBA8,
-			GL_UNSIGNED_BYTE, win->framebuffer);
-
-	glGenFramebuffers(1, &win->read_fbo);
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, win->read_fbo);
-	glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-						   GL_TEXTURE_2D, win->texo, 0);
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-}
-
-void t_mlx_win_draw(t_mlx_win *win)
-{
-	glBindTexture(GL_TEXTURE_2D, win->texo);
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, win->read_fbo);
-	glTexImage2D(
-			GL_TEXTURE_2D, 0, GL_RGBA8,
-			win->w, win->h, 0, GL_RGBA8,
-			GL_UNSIGNED_BYTE, win->framebuffer);
-	glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-						   GL_TEXTURE_2D, win->texo, 0);
-
-//	glBindFramebuffer(GL_READ_FRAMEBUFFER, win->read_fbo);
-	glBlitFramebuffer(0, 0, win->w, win->h,
-					  0, 0, win->w, win->h,
-					  GL_COLOR_BUFFER_BIT, GL_LINEAR);
-//	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-}
-*/
