@@ -10,6 +10,8 @@ add_library(mlx_glfw
 		src/hook.c
 		src/framebuffer.c
 		src/mlx_keys.c
+		src/mlx_string.c
+		src/mlx_image.c
 		src/fps_meter.c
 		)
 target_link_libraries(mlx_glfw
