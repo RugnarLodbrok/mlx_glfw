@@ -70,7 +70,4 @@ void mlx_put_image_to_window(t_mlx *mlx, t_mlx_win *win, t_mlx_image *im, int x,
 void t_mlx_win_framebuffer_init(t_mlx_win_framebuffer* fb, int w, int h);
 void t_mlx_win_framebuffer_draw(t_mlx_win_framebuffer* fb);
 
-uint make_shader(uint type, char* f_name);
-uint link_shaders(int n, ...);
-
 #endif
