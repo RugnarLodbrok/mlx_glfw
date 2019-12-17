@@ -23,7 +23,7 @@ static int key_down_f(int keycode, void *p)
 
 static int mouse_press_f(int button, int x, int y, void *p)
 {
-	printf("CLICK CALLBACK\n");
+	printf("CLICK CALLBACK %d %d\n", x, y);
 	return (0);
 }
 

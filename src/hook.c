@@ -2,8 +2,8 @@
 #include "mlx_consts.h"
 #include "stdio.h"
 
-extern int glut2mlx_keys[512];
-extern int glut2mlx_mouse_buttons[8];
+extern int glfw2mlx_key_map[512];
+extern int glfw2mlx_mouse_key_map[8];
 
 void mlx_loop_hook(t_mlx* mlx, int (* loop_hook)(void* p), void* p)
 {
@@ -23,22 +23,20 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		h = &win->hooks[MLX_EVENT_KEY_RELEASE];
 	else
 		return;
-//	if (action == GLFW_PRESS)
-//		printf("press: %d `%c`\n", key, key);
 	if (!h->f)
 		return;
-	h->f(glut2mlx_keys[key], h->p);
+	h->f(glfw2mlx_key_map[key], h->p);
 }
 
 static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
 	t_mlx_win* win;
 	t_mlx_hook* h;
-	int x;
-	int y;
+	double x;
+	double y;
 
 	win = glfwGetWindowUserPointer(window);
-	button = glut2mlx_mouse_buttons[button];
+	button = glfw2mlx_mouse_key_map[button];
 	if (action == GLFW_PRESS)
 		h = &win->hooks[MLX_EVENT_MOUSE_PRESS];
 	else if (action == GLFW_RELEASE)
@@ -48,11 +46,48 @@ static void mouse_button_callback(GLFWwindow* window, int button, int action, in
 	printf("mouse\n");
 	if (!h->f)
 		return;
-	x = 0;
-	y = 0;
-	h->f(button, x, y, h->p);
+	glfwGetCursorPos(window, &x, &y);
+	h->f(button, (int)x, (int)y, h->p);
 }
 
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	t_mlx_win* win;
+	t_mlx_hook* h;
+	double x;
+	double y;
+
+	win = glfwGetWindowUserPointer(window);
+	h = &win->hooks[MLX_EVENT_MOUSE_PRESS];
+	if (!h->f)
+		return;
+	glfwGetCursorPos(window, &x, &y);
+	if (xoffset)
+	{
+		if (xoffset < 0)
+			h->f(MOUSE_SCROLL_UP, (int)x, (int)y, h->p);
+		else
+			h->f(MOUSE_SCROLL_DOWN, (int)x, (int)y, h->p);
+	}
+	if (yoffset)
+	{
+		if (yoffset < 0)
+			h->f(MOUSE_SCROLL_LEFT, (int)x, (int)y, h->p);
+		else
+			h->f(MOUSE_SCROLL_RIGHT, (int)x, (int)y, h->p);
+	}
+}
+
+static void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	t_mlx_win* win;
+	t_mlx_hook* h;
+
+	win = glfwGetWindowUserPointer(window);
+	h = &win->hooks[MLX_EVENT_MOUSE_MOVE];
+	if (h->f)
+		h->f((int)xpos, (int)ypos, h->p);
+}
 
 void mlx_hook(t_mlx_win* win, int event, int event_mask,
 			  int (* hook)(),
@@ -65,21 +100,11 @@ void mlx_hook(t_mlx_win* win, int event, int event_mask,
 	h->p = p;
 	//todo: protection from calling twice?
 	if (event == MLX_EVENT_KEY_PRESS || event == MLX_EVENT_KEY_RELEASE)
-	{
 		glfwSetKeyCallback(win->window, key_callback);
-	}
 	if (event == MLX_EVENT_MOUSE_RELEASE || event == MLX_EVENT_MOUSE_PRESS)
 		glfwSetMouseButtonCallback(win->window, mouse_button_callback);
-/*	if (event == MLX_EVENT_MOUSE_PRESS)
-		if (!win->hooks[MLX_EVENT_MOUSE_RELEASE].f)
-			glutMouseFunc(cb_mouse_event);
-	if (event == MLX_EVENT_MOUSE_RELEASE)
-		if (!win->hooks[MLX_EVENT_MOUSE_PRESS].f)
-			glutMouseFunc(cb_mouse_event);
+	if (event == MLX_EVENT_MOUSE_PRESS)
+		glfwSetScrollCallback(win->window, scroll_callback);
 	if (event == MLX_EVENT_MOUSE_MOVE)
-	{
-		glutMotionFunc(cb_mouse_move);
-		glutPassiveMotionFunc(cb_mouse_move);
-	}
- */
+		glfwSetCursorPosCallback(win->window, cursor_position_callback);
 }
