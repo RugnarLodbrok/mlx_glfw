@@ -42,7 +42,7 @@ void mlx_put_image_to_window(t_mlx *mlx, t_mlx_win *win, t_mlx_image *im, int x,
 	w = x1 - x;
 	for (i = y, j = 0; i < y1; i++, j++)
 		memcpy(
-				&win->fb.data[i * win->w + x],
+				&win->fb.data[(win->h - 1 - i) * win->w + x],
 				&im->data[im->w * j],
 				w* sizeof(unsigned int));
 }

@@ -15,12 +15,12 @@ add_library(mlx_glfw
 		src/fps_meter.c
 		)
 target_link_libraries(mlx_glfw
-		LINK_PUBLIC ${CMAKE_SOURCE_DIR}/glfw3.lib
+		LINK_PRIVATE ${CMAKE_SOURCE_DIR}/glfw3.lib
 		)
 add_executable(mlx_test
 		src/main.c
 		)#SET_TARGET_PROPERTIES(opengl_sandbox PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries(mlx_test
 		LINK_PRIVATE mlx_glfw
-		LINK_PUBLIC ${CMAKE_SOURCE_DIR}/glfw3.lib
+#		LINK_PRIVATE ${CMAKE_SOURCE_DIR}/glfw3.lib
 		)
